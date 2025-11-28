@@ -5,11 +5,13 @@ import { DbModule } from './db/db.module';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './config/database.config';
 import { configValidationSchema } from './config/validation.schema';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig],
+      load: [databaseConfig, configuration],
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validationSchema: configValidationSchema,
       validationOptions: {
         allowUnknown: true, // разрешаем переменные вне схемы
