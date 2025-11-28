@@ -3,12 +3,19 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DbModule } from './db/db.module';
 import { ConfigModule } from '@nestjs/config';
-import configuration from './config/configuration';
+import databaseConfig from './config/database.config';
+import { configValidationSchema } from './config/validation.schema';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [configuration],
+      load: [databaseConfig],
+      validationSchema: configValidationSchema,
+      validationOptions: {
+        allowUnknown: true, // разрешаем переменные вне схемы
+        abortEarly: false, // собираем все ошибки
+      },
+      cache: true,
     }),
     DbModule,
   ],
