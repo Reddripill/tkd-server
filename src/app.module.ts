@@ -5,12 +5,20 @@ import { DbModule } from './db/db.module';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './config/database.config';
 import { configValidationSchema } from './config/validation.schema';
-import configuration from './config/configuration';
+import { TournamentsModule } from './tournaments/tournaments.module';
+import { CompetitionsModule } from './competitions/competitions.module';
+import { CompetitionCategoryModule } from './competition_category/competition_category.module';
+import { CompetitionPlaceModule } from './competition_place/competition_place.module';
+import { CompetitionDisciplineModule } from './competition_discipline/competition_discipline.module';
+import { CategoriesModule } from './categories/categories.module';
+import { PlacesModule } from './places/places.module';
+import { DisciplinesModule } from './disciplines/disciplines.module';
+import appConfig from './config/app.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, configuration],
+      load: [databaseConfig, appConfig],
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validationSchema: configValidationSchema,
       validationOptions: {
@@ -20,6 +28,14 @@ import configuration from './config/configuration';
       cache: true,
     }),
     DbModule,
+    TournamentsModule,
+    CompetitionsModule,
+    CompetitionCategoryModule,
+    CompetitionPlaceModule,
+    CompetitionDisciplineModule,
+    CategoriesModule,
+    PlacesModule,
+    DisciplinesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
