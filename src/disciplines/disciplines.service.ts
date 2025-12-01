@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDisciplineDto } from './dto/create-discipline.dto';
 import { UpdateDisciplineDto } from './dto/update-discipline.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Discipline } from './entities/discipline.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DisciplinesService {
+  constructor(
+    @InjectRepository(Discipline)
+    private disciplineRepository: Repository<Discipline>,
+  ) {}
+
   create(createDisciplineDto: CreateDisciplineDto) {
-    return 'This action adds a new discipline';
+    return this.disciplineRepository.insert(createDisciplineDto);
   }
 
   findAll() {
-    return `This action returns all disciplines`;
+    return this.disciplineRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} discipline`;
+  findOne(id: string) {
+    return this.disciplineRepository.find({ where: { id } });
   }
 
-  update(id: number, updateDisciplineDto: UpdateDisciplineDto) {
-    return `This action updates a #${id} discipline`;
+  update(id: string, updateDisciplineDto: UpdateDisciplineDto) {
+    return this.disciplineRepository.update(id, updateDisciplineDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} discipline`;
+  remove(id: string) {
+    return this.disciplineRepository.delete(id);
   }
 }

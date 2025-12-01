@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { DisciplinesService } from './disciplines.service';
 import { CreateDisciplineDto } from './dto/create-discipline.dto';
@@ -16,7 +18,7 @@ export class DisciplinesController {
   constructor(private readonly disciplinesService: DisciplinesService) {}
 
   @Post()
-  create(@Body() createDisciplineDto: CreateDisciplineDto) {
+  create(@Body(ValidationPipe) createDisciplineDto: CreateDisciplineDto) {
     return this.disciplinesService.create(createDisciplineDto);
   }
 
@@ -26,20 +28,20 @@ export class DisciplinesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.disciplinesService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.disciplinesService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateDisciplineDto: UpdateDisciplineDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) updateDisciplineDto: UpdateDisciplineDto,
   ) {
-    return this.disciplinesService.update(+id, updateDisciplineDto);
+    return this.disciplinesService.update(id, updateDisciplineDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.disciplinesService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.disciplinesService.remove(id);
   }
 }

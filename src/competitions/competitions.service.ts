@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { UpdateCompetitionDto } from './dto/update-competition.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Competition } from './entities/competition.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CompetitionsService {
+  constructor(
+    @InjectRepository(Competition)
+    private competitionRepository: Repository<Competition>,
+  ) {}
   create(createCompetitionDto: CreateCompetitionDto) {
-    return 'This action adds a new competition';
+    return this.competitionRepository.insert(createCompetitionDto);
   }
 
   findAll() {
-    return `This action returns all competitions`;
+    return this.competitionRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} competition`;
+  findOne(id: string) {
+    return this.competitionRepository.find({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updateCompetitionDto: UpdateCompetitionDto) {
-    return `This action updates a #${id} competition`;
+  update(id: string, updateCompetitionDto: UpdateCompetitionDto) {
+    return this.competitionRepository.update(id, updateCompetitionDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} competition`;
+  remove(id: string) {
+    return this.competitionRepository.delete({ id });
   }
 }

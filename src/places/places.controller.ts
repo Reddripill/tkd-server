@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
@@ -16,7 +18,7 @@ export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
 
   @Post()
-  create(@Body() createPlaceDto: CreatePlaceDto) {
+  create(@Body(ValidationPipe) createPlaceDto: CreatePlaceDto) {
     return this.placesService.create(createPlaceDto);
   }
 
@@ -26,17 +28,20 @@ export class PlacesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.placesService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.placesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlaceDto: UpdatePlaceDto) {
-    return this.placesService.update(+id, updatePlaceDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) updatePlaceDto: UpdatePlaceDto,
+  ) {
+    return this.placesService.update(id, updatePlaceDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.placesService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.placesService.remove(id);
   }
 }

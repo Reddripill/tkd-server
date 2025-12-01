@@ -1,4 +1,4 @@
-import { CompetitionCategory } from 'src/competition_category/entities/competition_category.entity';
+import { Category } from 'src/categories/entities/category.entity';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Place } from 'src/places/entities/place.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
@@ -8,7 +8,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,20 +20,32 @@ export class Competition {
   @Column({ type: 'text' })
   title: string;
 
-  @ManyToOne(() => Tournament, (tournament) => tournament.competitions)
+  @ManyToOne(() => Tournament, (tournament) => tournament.competitions, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'tournament_id' })
   tournament: Tournament;
 
-  @ManyToOne(() => Discipline, (discipline) => discipline.competitions)
+  @ManyToOne(() => Discipline, (discipline) => discipline.competitions, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'discipline_id' })
-  discipline: Discipline;
+  discipline?: Discipline;
 
-  @ManyToOne(() => Place, (place) => place.competitions)
+  @ManyToOne(() => Place, (place) => place.competitions, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'place_id' })
-  place: Place;
+  place?: Place;
 
-  @OneToMany(() => CompetitionCategory, (compToCat) => compToCat.competition)
-  competitionToCategories: CompetitionCategory[];
+  @ManyToOne(() => Category, (category) => category.competitions, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'category_id' })
+  category?: Category;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

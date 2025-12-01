@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { UpdatePlaceDto } from './dto/update-place.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Place } from './entities/place.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PlacesService {
+  constructor(
+    @InjectRepository(Place)
+    private placeRepository: Repository<Place>,
+  ) {}
+
   create(createPlaceDto: CreatePlaceDto) {
-    return 'This action adds a new place';
+    return this.placeRepository.insert(createPlaceDto);
   }
 
   findAll() {
-    return `This action returns all places`;
+    return this.placeRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} place`;
+  findOne(id: string) {
+    return this.placeRepository.find({ where: { id } });
   }
 
-  update(id: number, updatePlaceDto: UpdatePlaceDto) {
-    return `This action updates a #${id} place`;
+  update(id: string, updatePlaceDto: UpdatePlaceDto) {
+    return this.placeRepository.update(id, updatePlaceDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} place`;
+  remove(id: string) {
+    return this.placeRepository.delete(id);
   }
 }
