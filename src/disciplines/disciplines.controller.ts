@@ -8,6 +8,7 @@ import {
   Delete,
   ValidationPipe,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { DisciplinesService } from './disciplines.service';
 import { CreateDisciplineDto } from './dto/create-discipline.dto';
@@ -23,8 +24,8 @@ export class DisciplinesController {
   }
 
   @Get()
-  findAll() {
-    return this.disciplinesService.findAll();
+  findAll(@Query('q') query?: string) {
+    return this.disciplinesService.findAll(query);
   }
 
   @Get(':id')

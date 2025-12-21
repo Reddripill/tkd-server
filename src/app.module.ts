@@ -8,8 +8,9 @@ import { configValidationSchema } from './config/validation.schema';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { CompetitionsModule } from './competitions/competitions.module';
 import { CategoriesModule } from './categories/categories.module';
-import { PlacesModule } from './places/places.module';
+import { ArenasModule } from './arenas/arenas.module';
 import { DisciplinesModule } from './disciplines/disciplines.module';
+import { CompetitionCategoriesModule } from './competition_categories/competition_categories.module';
 import appConfig from './config/app.config';
 
 @Module({
@@ -28,8 +29,9 @@ import appConfig from './config/app.config';
     TournamentsModule,
     CompetitionsModule,
     CategoriesModule,
-    PlacesModule,
+    ArenasModule,
     DisciplinesModule,
+    CompetitionCategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

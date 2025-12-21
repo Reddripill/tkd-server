@@ -3,7 +3,7 @@ import { CreateDisciplineDto } from './dto/create-discipline.dto';
 import { UpdateDisciplineDto } from './dto/update-discipline.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Discipline } from './entities/discipline.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 
 @Injectable()
 export class DisciplinesService {
@@ -16,8 +16,16 @@ export class DisciplinesService {
     return this.disciplineRepository.insert(createDisciplineDto);
   }
 
-  findAll() {
-    return this.disciplineRepository.find();
+  findAll(query?: string) {
+    if (!query) {
+      return this.disciplineRepository.find();
+    } else {
+      return this.disciplineRepository.find({
+        where: {
+          title: ILike(`%${query}%`),
+        },
+      });
+    }
   }
 
   findOne(id: string) {

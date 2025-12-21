@@ -1,4 +1,4 @@
-import { Competition } from 'src/competitions/entities/competition.entity';
+import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,8 +16,8 @@ export class Category {
   @Column({ type: 'text' })
   title: string;
 
-  @OneToMany(() => Competition, (competitions) => competitions.category)
-  competitions: Competition[];
+  @OneToMany(() => CompetitionCategory, (cc) => cc.category, { nullable: true })
+  competitions?: CompetitionCategory[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

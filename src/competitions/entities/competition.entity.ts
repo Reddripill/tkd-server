@@ -1,24 +1,21 @@
-import { Category } from 'src/categories/entities/category.entity';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
-import { Place } from 'src/places/entities/place.entity';
+import { Arena } from 'src/arenas/entities/arenas.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import {
-  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
 
 @Entity('competitions')
 export class Competition {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'text' })
-  title: string;
 
   @ManyToOne(() => Tournament, (tournament) => tournament.competitions, {
     onDelete: 'CASCADE',
@@ -33,19 +30,17 @@ export class Competition {
   @JoinColumn({ name: 'discipline_id' })
   discipline?: Discipline;
 
-  @ManyToOne(() => Place, (place) => place.competitions, {
+  @ManyToOne(() => Arena, (arena) => arena.competitions, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  @JoinColumn({ name: 'place_id' })
-  place?: Place;
+  @JoinColumn({ name: 'arena_id' })
+  arena?: Arena;
 
-  @ManyToOne(() => Category, (category) => category.competitions, {
-    onDelete: 'SET NULL',
+  @OneToMany(() => CompetitionCategory, (cc) => cc.competition, {
     nullable: true,
   })
-  @JoinColumn({ name: 'category_id' })
-  category?: Category;
+  categories?: CompetitionCategory[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

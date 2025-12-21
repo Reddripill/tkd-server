@@ -8,15 +8,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('places')
-export class Place {
+@Entity('arenas')
+export class Arena {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'text' })
   title: string;
 
-  @OneToMany(() => Competition, (competition) => competition.place)
+  @OneToMany(() => Competition, (competition) => competition.arena)
   competitions: Competition[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
