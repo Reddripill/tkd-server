@@ -3,7 +3,8 @@ import { CreateArenaDto } from './dto/create-arena.dto';
 import { UpdateArenaDto } from './dto/update-arena.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Arena } from './entities/arenas.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import { FindArenasDto } from './dto/find-arenas.dto';
 
 @Injectable()
 export class ArenasService {
@@ -16,8 +17,22 @@ export class ArenasService {
     return this.arenaRepository.insert(createArenaDto);
   }
 
-  findAll() {
-    return this.arenaRepository.find();
+  async findAll(query: FindArenasDto) {
+    const { q: querySearch, limit, skip } = query;
+
+    const [data, count] = await this.arenaRepository.findAndCount({
+      take: limit,
+      skip: skip,
+      where: querySearch
+        ? {
+            title: ILike(`%${querySearch}%`),
+          }
+        : undefined,
+    });
+    return {
+      data,
+      count,
+    };
   }
 
   findOne(id: string) {

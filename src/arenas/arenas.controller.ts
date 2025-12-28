@@ -8,10 +8,12 @@ import {
   Delete,
   ValidationPipe,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ArenasService } from './arenas.service';
 import { CreateArenaDto } from './dto/create-arena.dto';
 import { UpdateArenaDto } from './dto/update-arena.dto';
+import { FindArenasDto } from './dto/find-arenas.dto';
 
 @Controller('arenas')
 export class ArenasController {
@@ -23,8 +25,8 @@ export class ArenasController {
   }
 
   @Get()
-  findAll() {
-    return this.arenasService.findAll();
+  findAll(@Query() query: FindArenasDto) {
+    return this.arenasService.findAll(query);
   }
 
   @Get(':id')

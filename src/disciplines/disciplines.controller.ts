@@ -13,6 +13,8 @@ import {
 import { DisciplinesService } from './disciplines.service';
 import { CreateDisciplineDto } from './dto/create-discipline.dto';
 import { UpdateDisciplineDto } from './dto/update-discipline.dto';
+import { FindDisciplinesDto } from './dto/find-disciplines.dto';
+import { RemoveDisciplinesDto } from './dto/remove-disciplines.dto';
 
 @Controller('disciplines')
 export class DisciplinesController {
@@ -24,7 +26,7 @@ export class DisciplinesController {
   }
 
   @Get()
-  findAll(@Query('q') query?: string) {
+  findAll(@Query() query: FindDisciplinesDto) {
     return this.disciplinesService.findAll(query);
   }
 
@@ -39,6 +41,11 @@ export class DisciplinesController {
     @Body(ValidationPipe) updateDisciplineDto: UpdateDisciplineDto,
   ) {
     return this.disciplinesService.update(id, updateDisciplineDto);
+  }
+
+  @Delete()
+  removeMany(@Body() dto: RemoveDisciplinesDto) {
+    return this.disciplinesService.removeMany(dto.ids);
   }
 
   @Delete(':id')

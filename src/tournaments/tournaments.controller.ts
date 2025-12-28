@@ -8,10 +8,12 @@ import {
   Delete,
   ParseUUIDPipe,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import { FindTournamentsDto } from './dto/find-tournaments.dto';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -23,8 +25,8 @@ export class TournamentsController {
   }
 
   @Get()
-  findAll() {
-    return this.tournamentsService.findAll();
+  findAll(@Query() query: FindTournamentsDto) {
+    return this.tournamentsService.findAll(query);
   }
 
   @Get(':id')

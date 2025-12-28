@@ -3,7 +3,8 @@ import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tournament } from './entities/tournament.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import { FindTournamentsDto } from './dto/find-tournaments.dto';
 
 @Injectable()
 export class TournamentsService {
@@ -16,8 +17,22 @@ export class TournamentsService {
     return this.tournamentRepository.insert(createTournamentDto);
   }
 
-  findAll() {
-    return this.tournamentRepository.find();
+  async findAll(query: FindTournamentsDto) {
+    const { q: querySearch, limit, skip } = query;
+
+    const [data, count] = await this.tournamentRepository.findAndCount({
+      take: limit,
+      skip: skip,
+      where: querySearch
+        ? {
+            title: ILike(`%${querySearch}%`),
+          }
+        : undefined,
+    });
+    return {
+      data,
+      count,
+    };
   }
 
   findOne(id: string) {

@@ -3,12 +3,13 @@ import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { UpdateCompetitionDto } from './dto/update-competition.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Competition } from './entities/competition.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
+import { FindCompetitionsDto } from './dto/find-competitions.dto';
 
 @Injectable()
 export class CompetitionsService {
@@ -118,8 +119,22 @@ export class CompetitionsService {
     return allCompetitions;
   }
 
-  findAll() {
-    return this.competitionRepository.find();
+  async findAll(query: FindCompetitionsDto) {
+    /* const { q: querySearch, limit, skip } = query;
+
+    const [data, count] = await this.competitionRepository.findAndCount({
+      take: limit,
+      skip: skip,
+      where: querySearch
+        ? {
+            title: ILike(`%${querySearch}%`),
+          }
+        : undefined,
+    });
+    return {
+      data,
+      count,
+    }; */
   }
 
   findOne(id: string) {
