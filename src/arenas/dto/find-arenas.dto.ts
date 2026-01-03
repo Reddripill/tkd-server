@@ -17,4 +17,8 @@ export class FindArenasDto {
   @IsInt()
   @IsPositive()
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  order?: string;
 }

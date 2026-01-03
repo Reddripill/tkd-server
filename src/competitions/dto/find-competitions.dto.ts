@@ -17,4 +17,8 @@ export class FindCompetitionsDto {
   @IsInt()
   @IsPositive()
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  order?: string;
 }

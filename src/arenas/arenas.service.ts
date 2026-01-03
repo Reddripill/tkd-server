@@ -18,11 +18,21 @@ export class ArenasService {
   }
 
   async findAll(query: FindArenasDto) {
-    const { q: querySearch, limit, skip } = query;
+    const { q: querySearch, limit, skip, order } = query;
+
+    const orderPairs = order
+      ? Object.fromEntries(
+          order.split(',').map((pair) => {
+            const [field, direction] = pair.split(':');
+            return [field, direction];
+          }),
+        )
+      : undefined;
 
     const [data, count] = await this.arenaRepository.findAndCount({
       take: limit,
       skip: skip,
+      order: orderPairs,
       where: querySearch
         ? {
             title: ILike(`%${querySearch}%`),

@@ -17,4 +17,8 @@ export class FindTournamentsDto {
   @IsInt()
   @IsPositive()
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  order?: string;
 }

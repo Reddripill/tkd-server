@@ -17,4 +17,8 @@ export class FindDisciplinesDto {
   @IsInt()
   @IsPositive()
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  order?: string;
 }

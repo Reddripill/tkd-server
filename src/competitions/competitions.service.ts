@@ -3,7 +3,7 @@ import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { UpdateCompetitionDto } from './dto/update-competition.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Competition } from './entities/competition.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import { Category } from 'src/categories/entities/category.entity';
