@@ -34,6 +34,7 @@ export class CompetitionsService {
   ) {}
 
   async create(createCompetitionDto: CreateCompetitionDto) {
+    console.log(createCompetitionDto.arenas[0]?.info?.map((item) => item));
     const allCompetitions: Competition[] = [];
     const { tournamentTitle, arenas } = createCompetitionDto;
 
@@ -138,11 +139,7 @@ export class CompetitionsService {
   }
 
   findOne(id: string) {
-    return this.competitionRepository.find({
-      where: {
-        id,
-      },
-    });
+    return this.competitionRepository.findOneBy({ id });
   }
 
   update(id: string, updateCompetitionDto: UpdateCompetitionDto) {

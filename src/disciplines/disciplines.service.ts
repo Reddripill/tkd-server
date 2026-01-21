@@ -14,7 +14,10 @@ export class DisciplinesService {
   ) {}
 
   create(createDisciplineDto: CreateDisciplineDto) {
-    return this.disciplineRepository.insert(createDisciplineDto);
+    const entities = createDisciplineDto.titles.map((item) => ({
+      title: item,
+    }));
+    return this.disciplineRepository.insert(entities);
   }
 
   async findAll(query: FindDisciplinesDto) {
@@ -46,7 +49,7 @@ export class DisciplinesService {
   }
 
   findOne(id: string) {
-    return this.disciplineRepository.find({ where: { id } });
+    return this.disciplineRepository.findOneBy({ id });
   }
 
   update(id: string, updateDisciplineDto: UpdateDisciplineDto) {

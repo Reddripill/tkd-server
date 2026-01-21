@@ -14,6 +14,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FindCategoriesDto } from './dto/find-categories.dto';
+import { RemoveCategoriesDto } from './dto/remove-categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -40,6 +41,11 @@ export class CategoriesController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
     return this.categoriesService.update(id, updateCategoryDto);
+  }
+
+  @Delete()
+  removeMany(@Body() dto: RemoveCategoriesDto) {
+    return this.categoriesService.removeMany(dto.ids);
   }
 
   @Delete(':id')

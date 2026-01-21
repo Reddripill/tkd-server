@@ -16,7 +16,9 @@ export class Tournament {
   @Column({ type: 'text' })
   title: string;
 
-  @OneToMany(() => Competition, (competition) => competition.tournament)
+  @OneToMany(() => Competition, (competition) => competition.tournament, {
+    eager: true,
+  })
   competitions: Competition[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })

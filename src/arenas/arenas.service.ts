@@ -46,7 +46,7 @@ export class ArenasService {
   }
 
   findOne(id: string) {
-    return this.arenaRepository.find({ where: { id } });
+    return this.arenaRepository.findOneBy({ id });
   }
 
   update(id: string, updateArenaDto: UpdateArenaDto) {

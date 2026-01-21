@@ -14,7 +14,10 @@ export class CategoriesService {
   ) {}
 
   create(createCategoryDto: CreateCategoryDto) {
-    return this.categoryRepository.insert(createCategoryDto);
+    const entities = createCategoryDto.titles.map((item) => ({
+      title: item,
+    }));
+    return this.categoryRepository.insert(entities);
   }
 
   async findAll(query: FindCategoriesDto) {
@@ -46,7 +49,7 @@ export class CategoriesService {
   }
 
   findOne(id: string) {
-    return this.categoryRepository.find({ where: { id } });
+    return this.categoryRepository.findOneBy({ id });
   }
 
   update(id: string, updateCategoryDto: UpdateCategoryDto) {
@@ -55,5 +58,9 @@ export class CategoriesService {
 
   remove(id: string) {
     return this.categoryRepository.delete(id);
+  }
+
+  removeMany(ids: string[]) {
+    return this.categoryRepository.delete(ids);
   }
 }

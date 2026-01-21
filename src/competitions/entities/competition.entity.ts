@@ -26,6 +26,7 @@ export class Competition {
   @ManyToOne(() => Discipline, (discipline) => discipline.competitions, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   @JoinColumn({ name: 'discipline_id' })
   discipline?: Discipline;
@@ -39,6 +40,7 @@ export class Competition {
 
   @OneToMany(() => CompetitionCategory, (cc) => cc.competition, {
     nullable: true,
+    eager: true,
   })
   categories?: CompetitionCategory[];
 

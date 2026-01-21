@@ -32,6 +32,13 @@ export class TournamentsService {
     const [data, count] = await this.tournamentRepository.findAndCount({
       take: limit,
       skip: skip,
+      relations: {
+        competitions: {
+          arena: true,
+          discipline: true,
+          categories: true,
+        },
+      },
       order: orderPairs,
       where: querySearch
         ? {
@@ -46,11 +53,7 @@ export class TournamentsService {
   }
 
   findOne(id: string) {
-    return this.tournamentRepository.find({
-      where: {
-        id,
-      },
-    });
+    return this.tournamentRepository.findOneBy({ id });
   }
 
   update(id: string, updateTournamentDto: UpdateTournamentDto) {

@@ -20,6 +20,7 @@ export class CompetitionCategory {
 
   @ManyToOne(() => Category, (category) => category.competitions, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   category: Category;
 
