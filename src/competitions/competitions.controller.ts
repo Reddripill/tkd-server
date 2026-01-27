@@ -14,6 +14,7 @@ import { CompetitionsService } from './competitions.service';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { UpdateCompetitionDto } from './dto/update-competition.dto';
 import { FindCompetitionsDto } from './dto/find-competitions.dto';
+import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
 
 @Controller('competitions')
 export class CompetitionsController {
@@ -40,6 +41,11 @@ export class CompetitionsController {
     @Body(ValidationPipe) updateCompetitionDto: UpdateCompetitionDto,
   ) {
     return this.competitionsService.update(id, updateCompetitionDto);
+  }
+
+  @Delete()
+  removeMany(@Body() body: RemoveCompetitionsDto) {
+    return this.competitionsService.removeMany(body);
   }
 
   @Delete(':id')

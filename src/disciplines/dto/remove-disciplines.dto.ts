@@ -3,6 +3,6 @@ import { IsArray, IsUUID, ArrayNotEmpty } from 'class-validator';
 export class RemoveDisciplinesDto {
   @IsArray()
   @ArrayNotEmpty()
-  @IsUUID()
+  @IsUUID(undefined, { each: true })
   ids: string[];
 }

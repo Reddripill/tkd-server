@@ -10,6 +10,7 @@ import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
 import { FindCompetitionsDto } from './dto/find-competitions.dto';
+import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
 
 @Injectable()
 export class CompetitionsService {
@@ -34,7 +35,6 @@ export class CompetitionsService {
   ) {}
 
   async create(createCompetitionDto: CreateCompetitionDto) {
-    console.log(createCompetitionDto.arenas[0]?.info?.map((item) => item));
     const allCompetitions: Competition[] = [];
     const { tournamentTitle, arenas } = createCompetitionDto;
 
@@ -144,6 +144,18 @@ export class CompetitionsService {
 
   update(id: string, updateCompetitionDto: UpdateCompetitionDto) {
     //  return this.competitionRepository.update(id, updateCompetitionDto);
+  }
+
+  removeMany(body: RemoveCompetitionsDto) {
+    const { arena_id, tournament_id } = body;
+    return this.competitionRepository.delete({
+      arena: {
+        id: arena_id,
+      },
+      tournament: {
+        id: tournament_id,
+      },
+    });
   }
 
   remove(id: string) {
