@@ -13,6 +13,8 @@ import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
 import { CompetitionCategoriesModule } from 'src/competition_categories/competition_categories.module';
+import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
+import { TournamentsArenasModule } from 'src/tournaments_arenas/tournaments_arenas.module';
 
 @Module({
   imports: [
@@ -23,12 +25,14 @@ import { CompetitionCategoriesModule } from 'src/competition_categories/competit
       Category,
       Arena,
       CompetitionCategory,
+      TournamentsArena,
     ]),
     DisciplinesModule,
     TournamentsModule,
     CategoriesModule,
     ArenasModule,
     CompetitionCategoriesModule,
+    TournamentsArenasModule,
   ],
   controllers: [CompetitionsController],
   providers: [CompetitionsService],

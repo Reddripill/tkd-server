@@ -11,6 +11,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ArenasModule } from './arenas/arenas.module';
 import { DisciplinesModule } from './disciplines/disciplines.module';
 import { CompetitionCategoriesModule } from './competition_categories/competition_categories.module';
+import { TournamentsArenasModule } from './tournaments_arenas/tournaments_arenas.module';
 import appConfig from './config/app.config';
 
 @Module({
@@ -32,6 +33,7 @@ import appConfig from './config/app.config';
     ArenasModule,
     DisciplinesModule,
     CompetitionCategoriesModule,
+    TournamentsArenasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

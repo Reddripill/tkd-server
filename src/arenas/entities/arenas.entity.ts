@@ -1,4 +1,5 @@
 import { Competition } from 'src/competitions/entities/competition.entity';
+import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,8 +17,8 @@ export class Arena {
   @Column({ type: 'text' })
   title: string;
 
-  @Column({ type: 'smallint' })
-  order: number;
+  @OneToMany(() => TournamentsArena, (ta) => ta.arena, { nullable: true })
+  tournaments?: TournamentsArena[];
 
   @OneToMany(() => Competition, (competition) => competition.arena)
   competitions: Competition[];

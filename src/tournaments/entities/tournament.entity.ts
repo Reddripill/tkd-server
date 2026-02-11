@@ -1,4 +1,5 @@
 import { Competition } from 'src/competitions/entities/competition.entity';
+import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
 import {
   Column,
   CreateDateColumn,
@@ -23,6 +24,12 @@ export class Tournament {
     eager: true,
   })
   competitions: Competition[];
+
+  @OneToMany(() => TournamentsArena, (ta) => ta.tournament, {
+    nullable: true,
+    eager: true,
+  })
+  arenas?: TournamentsArena[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import {
   ReorderCompetitionDto,
@@ -13,6 +13,7 @@ import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
 import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
+import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
 
 @Injectable()
 export class CompetitionsService {
@@ -31,6 +32,9 @@ export class CompetitionsService {
 
     @InjectRepository(CompetitionCategory)
     private ccRepository: Repository<CompetitionCategory>,
+
+    @InjectRepository(TournamentsArena)
+    private taRepository: Repository<TournamentsArena>,
 
     @InjectRepository(Arena)
     private arenaRepository: Repository<Arena>,
@@ -61,51 +65,47 @@ export class CompetitionsService {
     for (const arenaItem of arenas) {
       const { arenaTitle, info } = arenaItem;
 
-      const competitionsByTournament = await this.competitionRepository.find({
+      let arena = await this.arenaRepository.findOne({
         where: {
+          title: arenaTitle,
+        },
+      });
+
+      if (!arena) {
+        arena = await this.arenaRepository.save(
+          this.arenaRepository.create({ title: arenaTitle }),
+        );
+      }
+
+      const lastTA = await this.taRepository.findOne({
+        where: { tournament: { id: tournament.id } },
+        order: { order: 'DESC' },
+      });
+
+      const arenaOrder = lastTA ? lastTA.order + 1 : 1;
+
+      const isExistTA = await this.taRepository.findOne({
+        where: {
+          arena: {
+            id: arena.id,
+          },
           tournament: {
             id: tournament.id,
           },
         },
-        relations: {
-          arena: true,
-        },
       });
-
-      let arenaOrder = 1;
-
-      let arena: Arena;
-
-      const existingCompetition = competitionsByTournament.find(
-        (item) => item.arena?.title === arenaItem.arenaTitle,
-      );
-
-      if (!existingCompetition) {
-        if (competitionsByTournament.length !== 0) {
-          const uniqueArenas = new Set(
-            competitionsByTournament
-              .map((item) => item.arena?.id)
-              .filter((item) => !!item),
-          );
-          arenaOrder = uniqueArenas.size + 1;
-        }
-
-        arena = await this.arenaRepository.save(
-          this.arenaRepository.create({ title: arenaTitle, order: arenaOrder }),
+      if (!isExistTA) {
+        await this.taRepository.save(
+          this.taRepository.create({ arena, tournament, order: arenaOrder }),
         );
-      } else {
-        const arenaByTournament = existingCompetition?.arena;
-        if (arenaByTournament) {
-          arena = arenaByTournament;
-        } else {
-          throw new NotFoundException('Нет записи арены');
-        }
       }
 
       if (info && info.length > 0) {
         for (const infoItem of info) {
           const allCategories: Category[] = [];
+
           const { discipline: disciplineTitle, categories } = infoItem;
+
           let discipline = await this.disciplineRepository.findOne({
             where: {
               title: disciplineTitle,
@@ -215,6 +215,7 @@ export class CompetitionsService {
               );
             }
           }
+
           allCompetitions.push(competition);
         }
       }
