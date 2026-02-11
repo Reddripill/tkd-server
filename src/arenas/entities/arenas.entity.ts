@@ -16,6 +16,9 @@ export class Arena {
   @Column({ type: 'text' })
   title: string;
 
+  @Column({ type: 'smallint' })
+  order: number;
+
   @OneToMany(() => Competition, (competition) => competition.arena)
   competitions: Competition[];
 

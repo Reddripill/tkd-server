@@ -2,6 +2,7 @@ import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -22,6 +23,12 @@ export class Competition {
   })
   @JoinColumn({ name: 'tournament_id' })
   tournament: Tournament;
+
+  @Column({ type: 'boolean', default: false })
+  isFinished: boolean;
+
+  @Column({ type: 'smallint' })
+  order: number;
 
   @ManyToOne(() => Discipline, (discipline) => discipline.competitions, {
     onDelete: 'SET NULL',

@@ -16,6 +16,9 @@ export class Tournament {
   @Column({ type: 'text' })
   title: string;
 
+  @Column({ type: 'smallint' })
+  order: number;
+
   @OneToMany(() => Competition, (competition) => competition.tournament, {
     eager: true,
   })

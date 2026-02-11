@@ -8,12 +8,13 @@ import {
   Delete,
   ParseUUIDPipe,
   ValidationPipe,
-  Query,
 } from '@nestjs/common';
 import { CompetitionsService } from './competitions.service';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
-import { UpdateCompetitionDto } from './dto/update-competition.dto';
-import { FindCompetitionsDto } from './dto/find-competitions.dto';
+import {
+  ReorderCompetitionDto,
+  UpdateCompetitionDto,
+} from './dto/update-competition.dto';
 import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
 
 @Controller('competitions')
@@ -25,15 +26,25 @@ export class CompetitionsController {
     return this.competitionsService.create(createCompetitionDto);
   }
 
-  @Get()
+  /* @Get()
   findAll(@Query() query: FindCompetitionsDto) {
     return this.competitionsService.findAll(query);
-  }
+  } */
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.competitionsService.findOne(id);
   }
+
+  @Patch('/reorder')
+  reorder(@Body(ValidationPipe) reorderCompetitionDto: ReorderCompetitionDto) {
+    return this.competitionsService.reorder(reorderCompetitionDto);
+  }
+
+  /* @Patch('/move')
+  move(@Body(ValidationPipe) moveCompetitionDto: UpdateCompetitionDto) {
+    return this.competitionsService.move(moveCompetitionDto);
+  } */
 
   @Patch(':id')
   update(

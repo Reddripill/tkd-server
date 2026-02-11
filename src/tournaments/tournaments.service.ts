@@ -60,6 +60,10 @@ export class TournamentsService {
     return this.tournamentRepository.update(id, updateTournamentDto);
   }
 
+  reorder(id: string, updateTournamentDto: UpdateTournamentDto) {
+    return this.tournamentRepository.update(id, updateTournamentDto);
+  }
+
   remove(id: string) {
     return this.tournamentRepository.delete({ id });
   }
