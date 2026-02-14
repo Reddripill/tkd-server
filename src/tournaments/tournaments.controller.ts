@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import {
+  ReorderTournamentDto,
+  UpdateTournamentDto,
+} from './dto/update-tournament.dto';
 import { FindTournamentsDto } from './dto/find-tournaments.dto';
 
 @Controller('tournaments')
@@ -32,6 +35,11 @@ export class TournamentsController {
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.tournamentsService.findOne(id);
+  }
+
+  @Patch('/reorder')
+  reorder(@Body(ValidationPipe) reorderCompetitionDto: ReorderTournamentDto) {
+    return this.tournamentsService.reorder(reorderCompetitionDto);
   }
 
   @Patch(':id')

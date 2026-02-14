@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
@@ -34,10 +35,20 @@ class InfoDto {
 }
 
 class ArenaDto {
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : ''))
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined,
+  )
   @IsString()
   @IsNotEmpty()
-  arenaTitle: string;
+  arenaTitle?: string;
+
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined,
+  )
+  @IsOptional()
+  @IsUUID()
+  arenaId?: string;
 
   @IsOptional()
   @IsArray()
@@ -47,10 +58,20 @@ class ArenaDto {
 }
 
 export class CreateCompetitionDto {
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : ''))
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined,
+  )
   @IsString()
   @IsNotEmpty()
-  tournamentTitle: string;
+  tournamentTitle?: string;
+
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined,
+  )
+  @IsOptional()
+  @IsUUID()
+  tournamentId?: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -2,17 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import {
   ReorderCompetitionDto,
+  ReorderCompetitionItem,
   UpdateCompetitionDto,
 } from './dto/update-competition.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Competition } from './entities/competition.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
-import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
+import {
+  RemoveCompetitionItemDto,
+  RemoveCompetitionsDto,
+} from './dto/remove-competitions.dto';
 import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
 
 @Injectable()
@@ -42,13 +46,29 @@ export class CompetitionsService {
 
   async create(createCompetitionDto: CreateCompetitionDto) {
     const allCompetitions: Competition[] = [];
-    const { tournamentTitle, arenas } = createCompetitionDto;
+    const { tournamentTitle, tournamentId, arenas } = createCompetitionDto;
 
-    let tournament = await this.tournamentRepository.findOne({
-      where: {
-        title: tournamentTitle,
-      },
-    });
+    if (!tournamentTitle && !tournamentId) return;
+
+    let tournament: Tournament | null;
+
+    if (tournamentTitle) {
+      tournament = await this.tournamentRepository.findOne({
+        where: [
+          {
+            title: tournamentTitle,
+          },
+        ],
+      });
+    } else {
+      tournament = await this.tournamentRepository.findOne({
+        where: [
+          {
+            id: tournamentTitle,
+          },
+        ],
+      });
+    }
 
     if (!tournament) {
       const tournamentsCount = await this.tournamentRepository.count();
@@ -63,13 +83,25 @@ export class CompetitionsService {
     }
 
     for (const arenaItem of arenas) {
-      const { arenaTitle, info } = arenaItem;
+      const { arenaTitle, arenaId, info } = arenaItem;
 
-      let arena = await this.arenaRepository.findOne({
-        where: {
-          title: arenaTitle,
-        },
-      });
+      if (!arenaTitle && !arenaId) continue;
+
+      let arena: Arena | null;
+
+      if (arenaTitle) {
+        arena = await this.arenaRepository.findOne({
+          where: [{ title: arenaTitle }],
+        });
+      } else {
+        arena = await this.arenaRepository.findOne({
+          where: [
+            {
+              id: arenaId,
+            },
+          ],
+        });
+      }
 
       if (!arena) {
         arena = await this.arenaRepository.save(
@@ -106,117 +138,122 @@ export class CompetitionsService {
 
           const { discipline: disciplineTitle, categories } = infoItem;
 
-          let discipline = await this.disciplineRepository.findOne({
-            where: {
-              title: disciplineTitle,
-            },
-          });
+          let discipline: Discipline | null = null;
 
-          if (!discipline) {
-            discipline = await this.disciplineRepository.save(
-              this.disciplineRepository.create({ title: disciplineTitle }),
-            );
-          }
+          if (disciplineTitle) {
+            discipline = await this.disciplineRepository.findOne({
+              where: {
+                title: disciplineTitle,
+              },
+            });
 
-          if (categories && categories.length > 0) {
-            for (const categoryItem of categories) {
-              let category = await this.categoryRepository.findOne({
-                where: {
-                  title: categoryItem,
+            if (!discipline) {
+              discipline = await this.disciplineRepository.save(
+                this.disciplineRepository.create({ title: disciplineTitle }),
+              );
+            }
+
+            if (categories && categories.length > 0) {
+              for (const categoryItem of categories) {
+                let category = await this.categoryRepository.findOne({
+                  where: {
+                    title: categoryItem,
+                  },
+                });
+
+                if (!category) {
+                  category = await this.categoryRepository.save(
+                    this.categoryRepository.create({ title: categoryItem }),
+                  );
+                }
+                allCategories.push(category);
+              }
+            }
+
+            const competitionsByAll = await this.competitionRepository.find({
+              where: {
+                tournament: {
+                  id: tournament.id,
                 },
-              });
+                arena: {
+                  id: arena.id,
+                },
+                discipline: {
+                  title: discipline.title,
+                },
+              },
+              relations: {
+                categories: {
+                  category: true,
+                },
+              },
+            });
 
-              if (!category) {
-                category = await this.categoryRepository.save(
-                  this.categoryRepository.create({ title: categoryItem }),
+            const sortedCategoryTitles = allCategories
+              .map((c) => c.title)
+              .sort();
+
+            const isCompetitonDuplicate = competitionsByAll.some(
+              (competition) => {
+                const categorieTitles = competition.categories
+                  ?.map((item) => item.category.title)
+                  .sort();
+
+                if (
+                  !categorieTitles ||
+                  categorieTitles.length !== sortedCategoryTitles.length
+                ) {
+                  return false;
+                }
+
+                return sortedCategoryTitles.every(
+                  (title, index) => title === categorieTitles[index],
+                );
+              },
+            );
+
+            if (isCompetitonDuplicate) continue;
+
+            const competitionsByArena = await this.competitionRepository.find({
+              where: {
+                tournament: {
+                  id: tournament.id,
+                },
+                arena: {
+                  id: arena.id,
+                },
+              },
+              order: {
+                order: 'DESC',
+              },
+            });
+
+            const competitionOrder =
+              competitionsByArena.length > 0
+                ? competitionsByArena[0].order + 1
+                : 1;
+
+            const competition = await this.competitionRepository.save(
+              this.competitionRepository.create({
+                tournament,
+                arena,
+                discipline,
+                order: competitionOrder,
+              }),
+            );
+
+            for (const category of allCategories) {
+              const existing = await this.ccRepository.findOne({
+                where: { category, competition },
+              });
+              if (!existing) {
+                await this.ccRepository.save(
+                  this.ccRepository.create({ category, competition }),
                 );
               }
-              allCategories.push(category);
             }
+            allCompetitions.push(competition);
           }
-
-          const competitionsByAll = await this.competitionRepository.find({
-            where: {
-              tournament: {
-                id: tournament.id,
-              },
-              arena: {
-                id: arena.id,
-              },
-              discipline: {
-                title: discipline.title,
-              },
-            },
-            relations: {
-              categories: {
-                category: true,
-              },
-            },
-          });
-
-          const sortedCategoryTitles = allCategories.map((c) => c.title).sort();
-
-          const isCompetitonDuplicate = competitionsByAll.some(
-            (competition) => {
-              const categorieTitles = competition.categories
-                ?.map((item) => item.category.title)
-                .sort();
-
-              if (
-                !categorieTitles ||
-                categorieTitles.length !== sortedCategoryTitles.length
-              ) {
-                return false;
-              }
-
-              return sortedCategoryTitles.every(
-                (title, index) => title === categorieTitles[index],
-              );
-            },
-          );
-
-          if (isCompetitonDuplicate) continue;
-
-          const competitionsByArena = await this.competitionRepository.find({
-            where: {
-              tournament: {
-                id: tournament.id,
-              },
-              arena: {
-                id: arena.id,
-              },
-            },
-            order: {
-              order: 'DESC',
-            },
-          });
-
-          const competitionOrder =
-            competitionsByArena.length > 0
-              ? competitionsByArena[0].order + 1
-              : 1;
-
-          const competition = await this.competitionRepository.save(
-            this.competitionRepository.create({
-              tournament,
-              arena,
-              discipline,
-              order: competitionOrder,
-            }),
-          );
-
-          for (const category of allCategories) {
-            const existing = await this.ccRepository.findOne({
-              where: { category, competition },
-            });
-            if (!existing) {
-              await this.ccRepository.save(
-                this.ccRepository.create({ category, competition }),
-              );
-            }
-          }
-
-          allCompetitions.push(competition);
         }
       }
     }
@@ -269,19 +306,53 @@ export class CompetitionsService {
     return entities;
   }
 
-  removeMany(body: RemoveCompetitionsDto) {
-    const { arena_id, tournament_id } = body;
-    return this.competitionRepository.delete({
-      arena: {
-        id: arena_id,
-      },
-      tournament: {
-        id: tournament_id,
-      },
-    });
+  async removeAllByArena(body: RemoveCompetitionsDto) {
+    const { items } = body;
+    const deletedCompetitionArr: DeleteResult[] = [];
+
+    for (const { arenaId, tournamentId } of items) {
+      const deletedCompetition = await this.competitionRepository.delete({
+        arena: {
+          id: arenaId,
+        },
+        tournament: {
+          id: tournamentId,
+        },
+      });
+      deletedCompetitionArr.push(deletedCompetition);
+    }
+    return deletedCompetitionArr;
   }
 
-  remove(id: string) {
-    return this.competitionRepository.delete({ id });
+  async remove(id: string, arenaInfo: RemoveCompetitionItemDto) {
+    const competitions = await this.competitionRepository.find({
+      where: {
+        tournament: {
+          id: arenaInfo.tournamentId,
+        },
+        arena: {
+          id: arenaInfo.arenaId,
+        },
+      },
+      order: {
+        order: 'ASC',
+      },
+    });
+    const removingIndex = competitions.findIndex((item) => item.id === id);
+    if (competitions && removingIndex !== -1) {
+      const updatingComps: ReorderCompetitionItem[] = competitions
+        .filter((_, index) => index > removingIndex)
+        .map((comp) => ({
+          id: comp.id,
+          arenaId: arenaInfo.arenaId,
+          tournamentId: arenaInfo.tournamentId,
+          order: comp.order - 1,
+        }));
+      const deleteResult = await this.competitionRepository.delete({ id });
+      if (deleteResult.affected === 1) {
+        await this.reorder({ items: updatingComps });
+      }
+      return deleteResult;
+    }
   }
 }

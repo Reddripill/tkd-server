@@ -15,7 +15,10 @@ import {
   ReorderCompetitionDto,
   UpdateCompetitionDto,
 } from './dto/update-competition.dto';
-import { RemoveCompetitionsDto } from './dto/remove-competitions.dto';
+import {
+  RemoveCompetitionItemDto,
+  RemoveCompetitionsDto,
+} from './dto/remove-competitions.dto';
 
 @Controller('competitions')
 export class CompetitionsController {
@@ -56,11 +59,14 @@ export class CompetitionsController {
 
   @Delete()
   removeMany(@Body() body: RemoveCompetitionsDto) {
-    return this.competitionsService.removeMany(body);
+    return this.competitionsService.removeAllByArena(body);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.competitionsService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: RemoveCompetitionItemDto,
+  ) {
+    return this.competitionsService.remove(id, body);
   }
 }

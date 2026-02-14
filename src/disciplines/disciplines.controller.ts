@@ -45,7 +45,7 @@ export class DisciplinesController {
 
   @Delete()
   removeMany(@Body() dto: RemoveDisciplinesDto) {
-    return this.disciplinesService.removeMany(dto.ids);
+    return this.disciplinesService.removeMany(dto.items);
   }
 
   @Delete(':id')

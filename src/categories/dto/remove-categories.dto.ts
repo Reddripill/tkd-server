@@ -4,5 +4,5 @@ export class RemoveCategoriesDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID(undefined, { each: true })
-  ids: string[];
+  items: string[];
 }

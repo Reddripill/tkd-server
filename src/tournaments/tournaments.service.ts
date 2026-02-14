@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import {
+  ReorderTournamentDto,
+  ReorderTournamentItem,
+  UpdateTournamentDto,
+} from './dto/update-tournament.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { ILike, Repository } from 'typeorm';
 import { FindTournamentsDto } from './dto/find-tournaments.dto';
+import { UpdateResult } from 'typeorm/browser';
 
 @Injectable()
 export class TournamentsService {
@@ -60,11 +65,37 @@ export class TournamentsService {
     return this.tournamentRepository.update(id, updateTournamentDto);
   }
 
-  reorder(id: string, updateTournamentDto: UpdateTournamentDto) {
-    return this.tournamentRepository.update(id, updateTournamentDto);
+  async reorder(updateTournamentDto: ReorderTournamentDto) {
+    const { items } = updateTournamentDto;
+    const entities: UpdateResult[] = [];
+    for (const item of items) {
+      const mutation = await this.tournamentRepository.update(item.id, {
+        order: item.order,
+      });
+      entities.push(mutation);
+    }
+    return entities;
   }
 
-  remove(id: string) {
-    return this.tournamentRepository.delete({ id });
+  async remove(id: string) {
+    const tournaments = await this.tournamentRepository.find({
+      order: {
+        order: 'ASC',
+      },
+    });
+    const removingIndex = tournaments.findIndex((item) => item.id === id);
+    if (tournaments && removingIndex !== -1) {
+      const updatingComps: ReorderTournamentItem[] = tournaments
+        .filter((_, index) => index > removingIndex)
+        .map((comp) => ({
+          id: comp.id,
+          order: comp.order - 1,
+        }));
+      const deleteResult = await this.tournamentRepository.delete({ id });
+      if (deleteResult.affected === 1) {
+        await this.reorder({ items: updatingComps });
+      }
+      return deleteResult;
+    }
   }
 }

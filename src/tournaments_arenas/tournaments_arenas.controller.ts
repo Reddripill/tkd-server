@@ -10,6 +10,7 @@ import {
 import { TournamentsArenasService } from './tournaments_arenas.service';
 import { CreateTournamentsArenaDto } from './dto/create-tournaments_arena.dto';
 import { UpdateTournamentsArenaDto } from './dto/update-tournaments_arena.dto';
+import { RemoveTournamentsArenaDto } from './dto/delete-tournaments_arena.dto';
 
 @Controller('tournaments-arenas')
 export class TournamentsArenasController {
@@ -38,6 +39,11 @@ export class TournamentsArenasController {
     @Body() updateTournamentsArenaDto: UpdateTournamentsArenaDto,
   ) {
     return this.tournamentsArenasService.update(+id, updateTournamentsArenaDto);
+  }
+
+  @Delete()
+  removeMany(@Body() body: RemoveTournamentsArenaDto) {
+    return this.tournamentsArenasService.removeMany(body);
   }
 
   @Delete(':id')

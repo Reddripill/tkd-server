@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsUUID, ValidateNested } from 'class-validator';
 
-export class RemoveCompetitionItemDto {
+export class RemoveTournamentsArenaItemDto {
   @IsUUID()
   tournamentId: string;
 
@@ -9,9 +9,9 @@ export class RemoveCompetitionItemDto {
   arenaId: string;
 }
 
-export class RemoveCompetitionsDto {
+export class RemoveTournamentsArenaDto {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RemoveCompetitionItemDto)
-  items: RemoveCompetitionItemDto[];
+  @Type(() => RemoveTournamentsArenaItemDto)
+  items: RemoveTournamentsArenaItemDto[];
 }

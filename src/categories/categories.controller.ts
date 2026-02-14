@@ -45,7 +45,7 @@ export class CategoriesController {
 
   @Delete()
   removeMany(@Body() dto: RemoveCategoriesDto) {
-    return this.categoriesService.removeMany(dto.ids);
+    return this.categoriesService.removeMany(dto.items);
   }
 
   @Delete(':id')

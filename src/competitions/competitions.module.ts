@@ -3,18 +3,12 @@ import { CompetitionsService } from './competitions.service';
 import { CompetitionsController } from './competitions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Competition } from './entities/competition.entity';
-import { DisciplinesModule } from 'src/disciplines/disciplines.module';
-import { TournamentsModule } from 'src/tournaments/tournaments.module';
-import { CategoriesModule } from 'src/categories/categories.module';
-import { ArenasModule } from 'src/arenas/arenas.module';
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
-import { CompetitionCategoriesModule } from 'src/competition_categories/competition_categories.module';
 import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
-import { TournamentsArenasModule } from 'src/tournaments_arenas/tournaments_arenas.module';
 
 @Module({
   imports: [
@@ -27,15 +21,9 @@ import { TournamentsArenasModule } from 'src/tournaments_arenas/tournaments_aren
       CompetitionCategory,
       TournamentsArena,
     ]),
-    DisciplinesModule,
-    TournamentsModule,
-    CategoriesModule,
-    ArenasModule,
-    CompetitionCategoriesModule,
-    TournamentsArenasModule,
   ],
   controllers: [CompetitionsController],
   providers: [CompetitionsService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, CompetitionsService],
 })
 export class CompetitionsModule {}

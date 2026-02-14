@@ -4,5 +4,5 @@ export class RemoveDisciplinesDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID(undefined, { each: true })
-  ids: string[];
+  items: string[];
 }

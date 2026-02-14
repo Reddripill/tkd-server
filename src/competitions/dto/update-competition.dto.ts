@@ -14,7 +14,7 @@ export class UpdateCompetitionDto extends PartialType(CreateCompetitionDto) {
   isFinished: boolean;
 }
 
-class ReorderCompetitionItem {
+export class ReorderCompetitionItem {
   @IsNumber()
   order: number;
 
