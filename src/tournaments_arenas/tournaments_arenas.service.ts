@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TournamentsArena } from './entities/tournaments_arena.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { CompetitionsService } from 'src/competitions/competitions.service';
+import { Arena } from 'src/arenas/entities/arenas.entity';
 
 @Injectable()
 export class TournamentsArenasService {
@@ -13,11 +14,54 @@ export class TournamentsArenasService {
     @InjectRepository(TournamentsArena)
     private taRepository: Repository<TournamentsArena>,
 
+    @InjectRepository(Arena)
+    private arenaRepository: Repository<Arena>,
+
     private readonly competitionsService: CompetitionsService,
   ) {}
 
-  create(createTournamentsArenaDto: CreateTournamentsArenaDto) {
-    return 'This action adds a new tournamentsArena';
+  async create(createTournamentsArenaDto: CreateTournamentsArenaDto) {
+    const { titles, tournamentId } = createTournamentsArenaDto;
+    const createdList: TournamentsArena[] = [];
+    for (const title of titles) {
+      const existingTournamentsArena = await this.taRepository.findOneBy({
+        tournament: {
+          id: tournamentId,
+        },
+        arena: {
+          title: title,
+        },
+      });
+      if (!existingTournamentsArena) {
+        let arena = await this.arenaRepository.findOneBy({ title });
+        if (!arena) {
+          arena = await this.arenaRepository.save(
+            this.arenaRepository.create({ title }),
+          );
+        }
+        const arenasCount = await this.taRepository.count({
+          where: {
+            tournament: {
+              id: tournamentId,
+            },
+          },
+        });
+        const arenaOrder = arenasCount + 1;
+        const createdArena = await this.taRepository.save(
+          this.taRepository.create({
+            arena: {
+              id: arena.id,
+            },
+            tournament: {
+              id: tournamentId,
+            },
+            order: arenaOrder,
+          }),
+        );
+        createdList.push(createdArena);
+      }
+    }
+    return createdList;
   }
 
   findAll() {
