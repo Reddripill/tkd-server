@@ -19,7 +19,10 @@ import {
   RemoveCompetitionItemDto,
   RemoveCompetitionsDto,
 } from './dto/remove-competitions.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('competitions')
 export class CompetitionsController {
   constructor(private readonly competitionsService: CompetitionsService) {}

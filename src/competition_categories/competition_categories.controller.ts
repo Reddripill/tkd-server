@@ -10,7 +10,10 @@ import {
 import { CompetitionCategoriesService } from './competition_categories.service';
 import { CreateCompetitionCategoryDto } from './dto/create-competition_category.dto';
 import { UpdateCompetitionCategoryDto } from './dto/update-competition_category.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('competition-categories')
 export class CompetitionCategoriesController {
   constructor(

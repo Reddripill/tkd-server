@@ -11,7 +11,10 @@ import { TournamentsArenasService } from './tournaments_arenas.service';
 import { CreateTournamentsArenaDto } from './dto/create-tournaments_arena.dto';
 import { UpdateTournamentsArenaDto } from './dto/update-tournaments_arena.dto';
 import { RemoveTournamentsArenaDto } from './dto/delete-tournaments_arena.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('tournaments-arenas')
 export class TournamentsArenasController {
   constructor(

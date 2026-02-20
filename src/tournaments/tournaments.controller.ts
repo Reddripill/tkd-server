@@ -17,7 +17,11 @@ import {
   UpdateTournamentDto,
 } from './dto/update-tournament.dto';
 import { FindTournamentsDto } from './dto/find-tournaments.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('tournaments')
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
@@ -27,6 +31,7 @@ export class TournamentsController {
     return this.tournamentsService.create(createTournamentDto);
   }
 
+  @Public()
   @Get()
   findAll(@Query() query: FindTournamentsDto) {
     return this.tournamentsService.findAll(query);

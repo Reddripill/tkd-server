@@ -11,4 +11,6 @@ export const configValidationSchema = Joi.object({
     .valid('development', 'production')
     .default('development'),
   PORT: Joi.number().default(3001),
+
+  JWT_SECRET: Joi.string().required(),
 });

@@ -15,7 +15,10 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FindCategoriesDto } from './dto/find-categories.dto';
 import { RemoveCategoriesDto } from './dto/remove-categories.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -25,6 +28,7 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
+  @Roles([UserRole.EDITOR])
   @Get()
   findAll(@Query() query: FindCategoriesDto) {
     return this.categoriesService.findAll(query);

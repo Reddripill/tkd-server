@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { FindUsersDto } from './dto/find-users.dto';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -13,8 +14,13 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  create(createuserDto: CreateUserDto) {
-    return this.userRepository.insert(createuserDto);
+  async create(createuserDto: CreateUserDto) {
+    const { password, ...credentials } = createuserDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return this.userRepository.insert({
+      password: hashedPassword,
+      ...credentials,
+    });
   }
 
   async findAll(query: FindUsersDto) {
@@ -45,12 +51,20 @@ export class UsersService {
     };
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOneBy({ id });
+  findOne(name: string) {
+    return this.userRepository.findOneBy({ name });
   }
 
-  update(id: string, updateDisciplineDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateDisciplineDto);
+  async update(id: string, updateDisciplineDto: UpdateUserDto) {
+    const { password, ...credentials } = updateDisciplineDto;
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+    return this.userRepository.update(id, {
+      password: hashedPassword,
+      ...credentials,
+    });
   }
 
   remove(id: string) {

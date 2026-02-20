@@ -14,7 +14,10 @@ import { ArenasService } from './arenas.service';
 import { CreateArenaDto } from './dto/create-arena.dto';
 import { UpdateArenaDto } from './dto/update-arena.dto';
 import { FindArenasDto } from './dto/find-arenas.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('arenas')
 export class ArenasController {
   constructor(private readonly arenasService: ArenasService) {}

@@ -15,7 +15,10 @@ import { CreateDisciplineDto } from './dto/create-discipline.dto';
 import { UpdateDisciplineDto } from './dto/update-discipline.dto';
 import { FindDisciplinesDto } from './dto/find-disciplines.dto';
 import { RemoveDisciplinesDto } from './dto/remove-disciplines.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/types/enums';
 
+@Roles([UserRole.ADMIN])
 @Controller('disciplines')
 export class DisciplinesController {
   constructor(private readonly disciplinesService: DisciplinesService) {}
@@ -25,6 +28,7 @@ export class DisciplinesController {
     return this.disciplinesService.create(createDisciplineDto);
   }
 
+  @Roles([UserRole.EDITOR])
   @Get()
   findAll(@Query() query: FindDisciplinesDto) {
     return this.disciplinesService.findAll(query);
