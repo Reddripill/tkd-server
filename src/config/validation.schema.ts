@@ -13,4 +13,6 @@ export const configValidationSchema = Joi.object({
   PORT: Joi.number().default(3001),
 
   JWT_SECRET: Joi.string().required(),
+  DEFAULT_ADMIN_NAME: Joi.string().required(),
+  DEFAULT_ADMIN_PASS: Joi.string().required(),
 });
