@@ -55,6 +55,10 @@ export class UsersService {
     return this.userRepository.findOneBy({ name });
   }
 
+  findById(id: string) {
+    return this.userRepository.findOneBy({ id });
+  }
+
   async update(id: string, updateDisciplineDto: UpdateUserDto) {
     const { password, ...credentials } = updateDisciplineDto;
     let hashedPassword = password;

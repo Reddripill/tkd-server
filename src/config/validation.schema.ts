@@ -12,7 +12,9 @@ export const configValidationSchema = Joi.object({
     .default('development'),
   PORT: Joi.number().default(3001),
 
-  JWT_SECRET: Joi.string().required(),
+  JWT_ACCESS_TOKEN: Joi.string().required(),
+  JWT_REFRESH_TOKEN: Joi.string().required(),
+
   DEFAULT_ADMIN_NAME: Joi.string().required(),
   DEFAULT_ADMIN_PASS: Joi.string().required(),
 });

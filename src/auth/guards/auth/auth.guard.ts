@@ -18,6 +18,7 @@ export interface JwtPayload {
 
 export interface AuthRequest extends Request {
   user: JwtPayload;
+  cookies: Record<string, string>;
 }
 
 @Injectable()
