@@ -6,9 +6,9 @@ import bcrypt from 'bcrypt';
 import { AuthRequest, JwtPayload } from './guards/auth/auth.guard';
 import authConfigEnv from 'src/config/auth.config';
 import appConfigEnv from 'src/config/app.config';
+import { CookieNames } from './constants/cookie.constants';
 import { type ConfigType } from '@nestjs/config';
 import { type Response } from 'express';
-import { CookieNames } from './constants/cookie.constants';
 
 @Injectable()
 export class AuthService {
@@ -48,11 +48,9 @@ export class AuthService {
 
   generateTokens(payload: JwtPayload, res: Response) {
     const accessExpiration = parseInt(this.authConfig.accessExpires as string);
-    const accessExpireTime = new Date(Date.now() + accessExpiration);
     const refreshExpiration = parseInt(
       this.authConfig.refreshExpires as string,
     );
-    const refreshExpireTime = new Date(Date.now() + refreshExpiration);
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: `${accessExpiration}ms`,
@@ -63,14 +61,12 @@ export class AuthService {
 
     res.cookie(CookieNames.AUTH, accessToken, {
       secure: this.appConfig.NODE_ENV === 'production',
-      expires: accessExpireTime,
       sameSite: 'lax',
       httpOnly: true,
     });
 
     res.cookie(CookieNames.REFRESH, refreshToken, {
       secure: this.appConfig.NODE_ENV === 'production',
-      expires: refreshExpireTime,
       sameSite: 'lax',
       httpOnly: true,
     });
@@ -89,6 +85,8 @@ export class AuthService {
 
     const refreshTokenMatches = user?.refresh_token === cookieRefreshToken;
     if (!refreshTokenMatches) {
+      response.clearCookie(CookieNames.AUTH);
+      response.clearCookie(CookieNames.REFRESH);
       throw new UnauthorizedException();
     }
 
@@ -106,10 +104,28 @@ export class AuthService {
     return payload;
   }
 
+  validateToken(request: AuthRequest) {
+    const accessToken = request.cookies?.[CookieNames.AUTH];
+    const refreshToken = request.cookies?.[CookieNames.REFRESH];
+    let payload: JwtPayload | null = null;
+    try {
+      if (accessToken) {
+        payload = this.jwtService.verify<JwtPayload>(accessToken);
+      }
+    } catch {
+      if (refreshToken) {
+        payload = this.jwtService.verify<JwtPayload>(refreshToken);
+      } else {
+        throw new UnauthorizedException();
+      }
+    }
+    return payload;
+  }
+
   async logout(userId: string, res: Response) {
     await this.usersService.update(userId, { refresh_token: null });
-    res.clearCookie(CookieNames.AUTH);
-    res.clearCookie(CookieNames.REFRESH);
-    return userId;
+    res.clearCookie(CookieNames.AUTH, { path: '/' });
+    res.clearCookie(CookieNames.REFRESH, { path: '/' });
+    return { id: userId };
   }
 }
