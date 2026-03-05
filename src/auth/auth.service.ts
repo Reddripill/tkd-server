@@ -1,6 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { FindAuthDto } from './dto/find-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { AuthRequest, JwtPayload } from './guards/auth/auth.guard';
@@ -9,6 +8,7 @@ import appConfigEnv from 'src/config/app.config';
 import { CookieNames } from './constants/cookie.constants';
 import { type ConfigType } from '@nestjs/config';
 import { type Response } from 'express';
+import { LoginDto } from 'src/common/dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userInfo: FindAuthDto, res: Response) {
+  async login(userInfo: LoginDto, res: Response) {
     const user = await this.usersService.findOne(userInfo.name);
     if (user) {
       const isPassMatch = await bcrypt.compare(

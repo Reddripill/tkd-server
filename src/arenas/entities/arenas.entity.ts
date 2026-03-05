@@ -1,31 +1,13 @@
+import { EntityWithTitle } from 'src/common/entity';
 import { Competition } from 'src/competitions/entities/competition.entity';
 import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, OneToMany } from 'typeorm';
 
 @Entity('arenas')
-export class Arena {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ type: 'text' })
-  title: string;
-
+export class Arena extends EntityWithTitle {
   @OneToMany(() => TournamentsArena, (ta) => ta.arena, { nullable: true })
   tournaments?: TournamentsArena[];
 
   @OneToMany(() => Competition, (competition) => competition.arena)
   competitions: Competition[];
-
-  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt: Date;
 }

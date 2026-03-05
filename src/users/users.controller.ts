@@ -32,9 +32,9 @@ export class UsersController {
     return this.usersService.findAll(query);
   }
 
-  @Get(':name')
-  login(@Param('name', ParseUUIDPipe) name: string) {
-    return this.usersService.findOne(name);
+  @Get(':id')
+  login(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.findById(id);
   }
 
   @Patch(':id')

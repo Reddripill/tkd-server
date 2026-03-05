@@ -1,13 +1,8 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum } from 'class-validator';
+import { LoginDto } from 'src/common/dto';
 import { UserRole } from 'src/types/enums';
 
-export class CreateUserDto {
-  @IsString()
-  name: string;
-
-  @IsString()
-  password: string;
-
+export class CreateUserDto extends LoginDto {
   @IsEnum(UserRole)
   role: UserRole;
 }

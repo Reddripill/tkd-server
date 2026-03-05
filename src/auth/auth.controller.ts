@@ -11,12 +11,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { FindAuthDto } from './dto/find-auth.dto';
 import { Public } from './decorators/public.decorator';
 import type { Response } from 'express';
 import { CurrentUser } from './decorators/currentUser.decorator';
 import type { AuthRequest, JwtPayload } from './guards/auth/auth.guard';
 import { RefreshGuard } from './guards/auth/refresh.guard';
+import { LoginDto } from 'src/common/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,7 +32,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(
-    @Body(ValidationPipe) loginDto: FindAuthDto,
+    @Body(ValidationPipe) loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.login(loginDto, res);

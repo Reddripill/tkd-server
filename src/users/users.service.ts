@@ -45,8 +45,13 @@ export class UsersService {
           }
         : undefined,
     });
+    const users = data.map((item) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...user } = item;
+      return user;
+    });
     return {
-      data,
+      users,
       count,
     };
   }
@@ -55,8 +60,12 @@ export class UsersService {
     return this.userRepository.findOneBy({ name });
   }
 
-  findById(id: string) {
-    return this.userRepository.findOneBy({ id });
+  async findById(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPass } = user;
+    return userWithoutPass;
   }
 
   async update(id: string, updateDisciplineDto: UpdateUserDto) {

@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArenaDto } from './dto/create-arena.dto';
-import { UpdateArenaDto } from './dto/update-arena.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Arena } from './entities/arenas.entity';
 import { ILike, Repository } from 'typeorm';
-import { FindArenasDto } from './dto/find-arenas.dto';
+import { EntityWithTitleDto, FindDto } from 'src/common/dto';
 
 @Injectable()
 export class ArenasService {
@@ -13,11 +11,11 @@ export class ArenasService {
     private arenaRepository: Repository<Arena>,
   ) {}
 
-  create(createArenaDto: CreateArenaDto) {
+  create(createArenaDto: EntityWithTitleDto) {
     return this.arenaRepository.insert(createArenaDto);
   }
 
-  async findAll(query: FindArenasDto) {
+  async findAll(query: FindDto) {
     const { q: querySearch, limit, skip, order } = query;
 
     const orderPairs = order
@@ -49,7 +47,7 @@ export class ArenasService {
     return this.arenaRepository.findOneBy({ id });
   }
 
-  update(id: string, updateArenaDto: UpdateArenaDto) {
+  update(id: string, updateArenaDto: EntityWithTitleDto) {
     return this.arenaRepository.update(id, updateArenaDto);
   }
 

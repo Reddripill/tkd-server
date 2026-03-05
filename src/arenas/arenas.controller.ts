@@ -11,11 +11,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ArenasService } from './arenas.service';
-import { CreateArenaDto } from './dto/create-arena.dto';
-import { UpdateArenaDto } from './dto/update-arena.dto';
-import { FindArenasDto } from './dto/find-arenas.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
+import { EntityWithTitleDto, FindDto } from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('arenas')
@@ -23,12 +21,12 @@ export class ArenasController {
   constructor(private readonly arenasService: ArenasService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createArenaDto: CreateArenaDto) {
+  create(@Body(ValidationPipe) createArenaDto: EntityWithTitleDto) {
     return this.arenasService.create(createArenaDto);
   }
 
   @Get()
-  findAll(@Query() query: FindArenasDto) {
+  findAll(@Query() query: FindDto) {
     return this.arenasService.findAll(query);
   }
 
@@ -40,7 +38,7 @@ export class ArenasController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) updateArenaDto: UpdateArenaDto,
+    @Body(ValidationPipe) updateArenaDto: EntityWithTitleDto,
   ) {
     return this.arenasService.update(id, updateArenaDto);
   }

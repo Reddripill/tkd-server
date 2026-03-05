@@ -19,6 +19,7 @@ import authConfig from './config/auth.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth/auth.guard';
 import { RolesGuard } from './auth/guards/roles/roles.guard';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { RolesGuard } from './auth/guards/roles/roles.guard';
     TournamentsArenasModule,
     AuthModule,
     UsersModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [

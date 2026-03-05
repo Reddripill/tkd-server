@@ -1,23 +1,12 @@
 import { Discipline } from 'src/disciplines/entities/discipline.entity';
 import { Arena } from 'src/arenas/entities/arenas.entity';
 import { Tournament } from 'src/tournaments/entities/tournament.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CompetitionCategory } from 'src/competition_categories/entities/competition_category.entity';
+import { EntityWithOrder } from 'src/common/entity';
 
 @Entity('competitions')
-export class Competition {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Competition extends EntityWithOrder {
   @ManyToOne(() => Tournament, (tournament) => tournament.competitions, {
     onDelete: 'CASCADE',
   })
@@ -26,9 +15,6 @@ export class Competition {
 
   @Column({ type: 'boolean', default: false })
   isFinished: boolean;
-
-  @Column({ type: 'smallint' })
-  order: number;
 
   @ManyToOne(() => Discipline, (discipline) => discipline.competitions, {
     onDelete: 'SET NULL',
@@ -50,10 +36,4 @@ export class Competition {
     eager: true,
   })
   categories?: CompetitionCategory[];
-
-  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt: Date;
 }

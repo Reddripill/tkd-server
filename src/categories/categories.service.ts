@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { ILike, Repository } from 'typeorm';
-import { FindCategoriesDto } from './dto/find-categories.dto';
+import { EntityWithTitleArrDto, FindDto } from 'src/common/dto';
 
 @Injectable()
 export class CategoriesService {
@@ -13,14 +12,14 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
+  create(createCategoryDto: EntityWithTitleArrDto) {
     const entities = createCategoryDto.titles.map((item) => ({
       title: item,
     }));
     return this.categoryRepository.insert(entities);
   }
 
-  async findAll(query: FindCategoriesDto) {
+  async findAll(query: FindDto) {
     const { q: querySearch, limit, skip, order } = query;
 
     const orderPairs = order

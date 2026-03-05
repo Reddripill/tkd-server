@@ -1,17 +1,9 @@
+import { BaseEntity } from 'src/common/entity';
 import { UserRole } from 'src/types/enums';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends BaseEntity {
   @Column({ type: 'text' })
   name: string;
 
@@ -27,10 +19,4 @@ export class User {
     default: UserRole.EDITOR,
   })
   role: UserRole;
-
-  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt: Date;
 }

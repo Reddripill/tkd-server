@@ -11,12 +11,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { FindCategoriesDto } from './dto/find-categories.dto';
-import { RemoveCategoriesDto } from './dto/remove-categories.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
+import {
+  EntityWithIdArrDto,
+  EntityWithTitleArrDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('categories')
@@ -24,13 +26,13 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createCategoryDto: CreateCategoryDto) {
+  create(@Body(ValidationPipe) createCategoryDto: EntityWithTitleArrDto) {
     return this.categoriesService.create(createCategoryDto);
   }
 
   @Roles([UserRole.EDITOR])
   @Get()
-  findAll(@Query() query: FindCategoriesDto) {
+  findAll(@Query() query: FindDto) {
     return this.categoriesService.findAll(query);
   }
 
@@ -48,8 +50,8 @@ export class CategoriesController {
   }
 
   @Delete()
-  removeMany(@Body() dto: RemoveCategoriesDto) {
-    return this.categoriesService.removeMany(dto.items);
+  removeMany(@Body() dto: EntityWithIdArrDto) {
+    return this.categoriesService.removeMany(dto.ids);
   }
 
   @Delete(':id')

@@ -1,25 +1,10 @@
+import { EntityWithTitleAndOrder } from 'src/common/entity';
 import { Competition } from 'src/competitions/entities/competition.entity';
 import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, OneToMany } from 'typeorm';
 
 @Entity('tournaments')
-export class Tournament {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ type: 'text' })
-  title: string;
-
-  @Column({ type: 'smallint' })
-  order: number;
-
+export class Tournament extends EntityWithTitleAndOrder {
   @OneToMany(() => Competition, (competition) => competition.tournament, {
     eager: true,
   })
@@ -30,10 +15,4 @@ export class Tournament {
     eager: true,
   })
   arenas?: TournamentsArena[];
-
-  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt: Date;
 }
