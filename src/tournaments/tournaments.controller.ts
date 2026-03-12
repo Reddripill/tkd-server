@@ -11,15 +11,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
-import { CreateTournamentDto } from './dto/create-tournament.dto';
 import {
   ReorderTournamentDto,
   UpdateTournamentDto,
 } from './dto/update-tournament.dto';
-import { FindTournamentsDto } from './dto/find-tournaments.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
+import { EntityWithTitleDto, FindDto } from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('tournaments')
@@ -27,13 +26,13 @@ export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createTournamentDto: CreateTournamentDto) {
+  create(@Body(ValidationPipe) createTournamentDto: EntityWithTitleDto) {
     return this.tournamentsService.create(createTournamentDto);
   }
 
   @Public()
   @Get()
-  findAll(@Query() query: FindTournamentsDto) {
+  findAll(@Query() query: FindDto) {
     return this.tournamentsService.findAll(query);
   }
 

@@ -11,11 +11,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { FindUsersDto } from './dto/find-users.dto';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
+import { EntityWithIdArrDto, FindDto } from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('users')
@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Query() query: FindUsersDto) {
+  findAll(@Query() query: FindDto) {
     return this.usersService.findAll(query);
   }
 
@@ -45,10 +45,10 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  /* @Delete()
-  removeMany(@Body() dto: RemoveDisciplinesDto) {
-    return this.disciplinesService.removeMany(dto.items);
-  } */
+  @Delete()
+  removeMany(@Body() dto: EntityWithIdArrDto) {
+    return this.usersService.removeMany(dto.items);
+  }
 
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {

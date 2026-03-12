@@ -18,6 +18,8 @@ import {
   RemoveCompetitionsDto,
 } from './dto/remove-competitions.dto';
 import { TournamentsArena } from 'src/tournaments_arenas/entities/tournaments_arena.entity';
+import { DisciplinesService } from 'src/disciplines/disciplines.service';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class CompetitionsService {
@@ -42,6 +44,10 @@ export class CompetitionsService {
 
     @InjectRepository(Arena)
     private arenaRepository: Repository<Arena>,
+
+    private disciplinesService: DisciplinesService,
+
+    private categoriesService: CategoriesService,
   ) {}
 
   async create(createCompetitionDto: CreateCompetitionDto) {

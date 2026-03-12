@@ -11,12 +11,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
 import {
   EntityWithIdArrDto,
   EntityWithTitleArrDto,
+  EntityWithTitleDto,
   FindDto,
 } from 'src/common/dto';
 
@@ -44,14 +44,14 @@ export class CategoriesController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateCategoryDto: UpdateCategoryDto,
+    @Body() updateCategoryDto: EntityWithTitleDto,
   ) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete()
   removeMany(@Body() dto: EntityWithIdArrDto) {
-    return this.categoriesService.removeMany(dto.ids);
+    return this.categoriesService.removeMany(dto.items);
   }
 
   @Delete(':id')

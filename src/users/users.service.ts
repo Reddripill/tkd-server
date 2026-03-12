@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { FindUsersDto } from './dto/find-users.dto';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import bcrypt from 'bcrypt';
+import { FindDto } from 'src/common/dto';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +23,7 @@ export class UsersService {
     });
   }
 
-  async findAll(query: FindUsersDto) {
+  async findAll(query: FindDto) {
     const { q: querySearch, limit, skip, order } = query;
 
     const orderPairs = order
@@ -51,7 +51,7 @@ export class UsersService {
       return user;
     });
     return {
-      users,
+      data: users,
       count,
     };
   }

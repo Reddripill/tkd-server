@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTournamentDto } from './dto/create-tournament.dto';
 import {
   ReorderTournamentDto,
   ReorderTournamentItem,
@@ -8,8 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { ILike, Repository } from 'typeorm';
-import { FindTournamentsDto } from './dto/find-tournaments.dto';
 import { UpdateResult } from 'typeorm/browser';
+import { EntityWithTitleDto, FindDto } from 'src/common/dto';
 
 @Injectable()
 export class TournamentsService {
@@ -18,11 +17,11 @@ export class TournamentsService {
     private tournamentRepository: Repository<Tournament>,
   ) {}
 
-  create(createTournamentDto: CreateTournamentDto) {
+  create(createTournamentDto: EntityWithTitleDto) {
     return this.tournamentRepository.insert(createTournamentDto);
   }
 
-  async findAll(query: FindTournamentsDto) {
+  async findAll(query: FindDto) {
     const { q: querySearch, limit, skip, order } = query;
 
     const orderPairs = order

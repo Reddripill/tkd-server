@@ -26,7 +26,7 @@ export class EntityWithIdArrDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID(undefined, { each: true })
-  ids: string[];
+  items: string[];
 }
 
 export class FindDto {

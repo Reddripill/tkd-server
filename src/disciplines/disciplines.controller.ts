@@ -11,12 +11,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { DisciplinesService } from './disciplines.service';
-import { CreateDisciplineDto } from './dto/create-discipline.dto';
-import { UpdateDisciplineDto } from './dto/update-discipline.dto';
-import { FindDisciplinesDto } from './dto/find-disciplines.dto';
-import { RemoveDisciplinesDto } from './dto/remove-disciplines.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
+import {
+  EntityWithIdArrDto,
+  EntityWithTitleArrDto,
+  EntityWithTitleDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('disciplines')
@@ -24,13 +26,13 @@ export class DisciplinesController {
   constructor(private readonly disciplinesService: DisciplinesService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createDisciplineDto: CreateDisciplineDto) {
+  create(@Body(ValidationPipe) createDisciplineDto: EntityWithTitleArrDto) {
     return this.disciplinesService.create(createDisciplineDto);
   }
 
   @Roles([UserRole.EDITOR])
   @Get()
-  findAll(@Query() query: FindDisciplinesDto) {
+  findAll(@Query() query: FindDto) {
     return this.disciplinesService.findAll(query);
   }
 
@@ -42,13 +44,13 @@ export class DisciplinesController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) updateDisciplineDto: UpdateDisciplineDto,
+    @Body(ValidationPipe) updateDisciplineDto: EntityWithTitleDto,
   ) {
     return this.disciplinesService.update(id, updateDisciplineDto);
   }
 
   @Delete()
-  removeMany(@Body() dto: RemoveDisciplinesDto) {
+  removeMany(@Body() dto: EntityWithIdArrDto) {
     return this.disciplinesService.removeMany(dto.items);
   }
 

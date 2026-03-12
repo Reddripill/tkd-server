@@ -8,8 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CompetitionCategoriesService } from './competition_categories.service';
-import { CreateCompetitionCategoryDto } from './dto/create-competition_category.dto';
-import { UpdateCompetitionCategoryDto } from './dto/update-competition_category.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
 
@@ -21,7 +19,7 @@ export class CompetitionCategoriesController {
   ) {}
 
   @Post()
-  create(@Body() createCompetitionCategoryDto: CreateCompetitionCategoryDto) {
+  create(@Body() createCompetitionCategoryDto: unknown) {
     return this.competitionCategoriesService.create(
       createCompetitionCategoryDto,
     );
@@ -40,7 +38,7 @@ export class CompetitionCategoriesController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateCompetitionCategoryDto: UpdateCompetitionCategoryDto,
+    @Body() updateCompetitionCategoryDto: unknown,
   ) {
     return this.competitionCategoriesService.update(
       +id,

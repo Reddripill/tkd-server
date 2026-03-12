@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDisciplineDto } from './dto/create-discipline.dto';
-import { UpdateDisciplineDto } from './dto/update-discipline.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Discipline } from './entities/discipline.entity';
 import { ILike, Repository } from 'typeorm';
-import { FindDisciplinesDto } from './dto/find-disciplines.dto';
+import {
+  EntityWithTitleArrDto,
+  EntityWithTitleDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Injectable()
 export class DisciplinesService {
@@ -13,14 +15,14 @@ export class DisciplinesService {
     private disciplineRepository: Repository<Discipline>,
   ) {}
 
-  create(createDisciplineDto: CreateDisciplineDto) {
+  create(createDisciplineDto: EntityWithTitleArrDto) {
     const entities = createDisciplineDto.titles.map((item) => ({
       title: item,
     }));
     return this.disciplineRepository.insert(entities);
   }
 
-  async findAll(query: FindDisciplinesDto) {
+  async findAll(query: FindDto) {
     const { q: querySearch, limit, skip, order } = query;
 
     const orderPairs = order
@@ -52,7 +54,7 @@ export class DisciplinesService {
     return this.disciplineRepository.findOneBy({ id });
   }
 
-  update(id: string, updateDisciplineDto: UpdateDisciplineDto) {
+  update(id: string, updateDisciplineDto: EntityWithTitleDto) {
     return this.disciplineRepository.update(id, updateDisciplineDto);
   }
 

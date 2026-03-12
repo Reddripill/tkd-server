@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Arena } from './entities/arenas.entity';
 import { ILike, Repository } from 'typeorm';
-import { EntityWithTitleDto, FindDto } from 'src/common/dto';
+import {
+  EntityWithTitleArrDto,
+  EntityWithTitleDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Injectable()
 export class ArenasService {
@@ -11,8 +15,11 @@ export class ArenasService {
     private arenaRepository: Repository<Arena>,
   ) {}
 
-  create(createArenaDto: EntityWithTitleDto) {
-    return this.arenaRepository.insert(createArenaDto);
+  create(createArenaDto: EntityWithTitleArrDto) {
+    const entities = createArenaDto.titles.map((item) => ({
+      title: item,
+    }));
+    return this.arenaRepository.insert(entities);
   }
 
   async findAll(query: FindDto) {

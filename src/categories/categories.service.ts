@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { ILike, Repository } from 'typeorm';
-import { EntityWithTitleArrDto, FindDto } from 'src/common/dto';
+import {
+  EntityWithTitleArrDto,
+  EntityWithTitleDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Injectable()
 export class CategoriesService {
@@ -51,7 +54,7 @@ export class CategoriesService {
     return this.categoryRepository.findOneBy({ id });
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+  update(id: string, updateCategoryDto: EntityWithTitleDto) {
     return this.categoryRepository.update(id, updateCategoryDto);
   }
 

@@ -13,7 +13,11 @@ import {
 import { ArenasService } from './arenas.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/types/enums';
-import { EntityWithTitleDto, FindDto } from 'src/common/dto';
+import {
+  EntityWithTitleArrDto,
+  EntityWithTitleDto,
+  FindDto,
+} from 'src/common/dto';
 
 @Roles([UserRole.ADMIN])
 @Controller('arenas')
@@ -21,7 +25,7 @@ export class ArenasController {
   constructor(private readonly arenasService: ArenasService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createArenaDto: EntityWithTitleDto) {
+  create(@Body(ValidationPipe) createArenaDto: EntityWithTitleArrDto) {
     return this.arenasService.create(createArenaDto);
   }
 
