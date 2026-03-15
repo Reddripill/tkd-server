@@ -15,11 +15,13 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  create(createCategoryDto: EntityWithTitleArrDto) {
+  async create(createCategoryDto: EntityWithTitleArrDto) {
     const entities = createCategoryDto.titles.map((item) => ({
       title: item,
     }));
-    return this.categoryRepository.insert(entities);
+    return this.categoryRepository.save(
+      this.categoryRepository.create(entities),
+    );
   }
 
   async findAll(query: FindDto) {

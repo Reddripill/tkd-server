@@ -15,11 +15,13 @@ export class DisciplinesService {
     private disciplineRepository: Repository<Discipline>,
   ) {}
 
-  create(createDisciplineDto: EntityWithTitleArrDto) {
+  async create(createDisciplineDto: EntityWithTitleArrDto) {
     const entities = createDisciplineDto.titles.map((item) => ({
       title: item,
     }));
-    return this.disciplineRepository.insert(entities);
+    return this.disciplineRepository.save(
+      this.disciplineRepository.create(entities),
+    );
   }
 
   async findAll(query: FindDto) {

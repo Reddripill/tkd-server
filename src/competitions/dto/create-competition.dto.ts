@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-class InfoDto {
+export class InfoDto {
   @Transform(({ value }) => {
     if (typeof value !== 'string') return undefined;
     const trimmed = value.trim();

@@ -8,6 +8,6 @@ import { CompetitionCategory } from './entities/competition_category.entity';
   imports: [TypeOrmModule.forFeature([CompetitionCategory])],
   controllers: [CompetitionCategoriesController],
   providers: [CompetitionCategoriesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, CompetitionCategoriesService],
 })
 export class CompetitionCategoriesModule {}

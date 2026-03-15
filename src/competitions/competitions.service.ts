@@ -115,13 +115,6 @@ export class CompetitionsService {
         );
       }
 
-      const lastTA = await this.taRepository.findOne({
-        where: { tournament: { id: tournament.id } },
-        order: { order: 'DESC' },
-      });
-
-      const arenaOrder = lastTA ? lastTA.order + 1 : 1;
-
       const isExistTA = await this.taRepository.findOne({
         where: {
           arena: {
@@ -132,7 +125,15 @@ export class CompetitionsService {
           },
         },
       });
+
       if (!isExistTA) {
+        const lastTA = await this.taRepository.findOne({
+          where: { tournament: { id: tournament.id } },
+          order: { order: 'DESC' },
+        });
+
+        const arenaOrder = lastTA ? lastTA.order + 1 : 1;
+
         await this.taRepository.save(
           this.taRepository.create({ arena, tournament, order: arenaOrder }),
         );
@@ -288,10 +289,65 @@ export class CompetitionsService {
     return this.competitionRepository.findOneBy({ id });
   }
 
-  update(id: string, updateCompetitionDto: UpdateCompetitionDto) {
-    return this.competitionRepository.update(id, {
-      isFinished: updateCompetitionDto.isFinished,
-    });
+  async update(id: string, updateCompetitionDto: UpdateCompetitionDto) {
+    const { isFinished, categories, discipline } = updateCompetitionDto;
+    if (
+      Object.values(updateCompetitionDto).every((item) => item === undefined)
+    ) {
+      throw new Error('Нет аргументов');
+    }
+
+    if (!discipline && !categories) {
+      return this.competitionRepository.update(id, {
+        isFinished: isFinished,
+      });
+    }
+
+    const oldCompetition = await this.findOne(id);
+
+    let newDiscipline: Discipline | null = null;
+
+    if (oldCompetition) {
+      if (discipline) {
+        if (oldCompetition.discipline?.title !== discipline) {
+          [newDiscipline] = await this.disciplinesService.create({
+            titles: [discipline],
+          });
+        }
+      }
+
+      if (categories) {
+        await this.ccRepository.delete({ competition: { id } });
+
+        for (const categoryTitle of categories) {
+          let category = await this.categoryRepository.findOne({
+            where: { title: categoryTitle },
+          });
+
+          if (!category) {
+            const [newCategory] = await this.categoriesService.create({
+              titles: [categoryTitle],
+            });
+            category = newCategory;
+          }
+
+          await this.ccRepository.save(
+            this.ccRepository.create({
+              competition: {
+                id: oldCompetition.id,
+              },
+              category,
+            }),
+          );
+        }
+      }
+
+      return this.competitionRepository.save({
+        ...oldCompetition,
+        discipline: newDiscipline ?? oldCompetition.discipline,
+        isFinished: isFinished ?? oldCompetition.isFinished,
+      });
+    }
   }
 
   async reorder(updateCompetitionDto: ReorderCompetitionDto) {
